@@ -7,10 +7,11 @@
     "ws": "7.2.1"
   },
   "devDependencies": {
-    "jshint": "^2.11.0"
+    "jshint": "^2.11.0",
+    "nodemon": "^2.0.2"
   },
   "scripts": {
-    "start": "nodejs app.js",
+    "start": "nodemon app.js",
     "test": "test"
   },
   "repository": {
