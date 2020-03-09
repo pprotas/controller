@@ -1,6 +1,8 @@
-FROM alpine:3.7
-WORKDIR app
+FROM node:13
+EXPOSE 8080
+WORKDIR /app
+COPY package.json /app
 COPY /src /app
-RUN apk add --no-cache nodejs
+RUN ls .
 RUN npm install
-CMD node app.js
+CMD npm start

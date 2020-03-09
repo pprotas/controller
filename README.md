@@ -8,4 +8,6 @@ Used in combination with [the simulation](https://github.com/pprotas/simulation)
 
 ### Cool optional stuff:
 - Install [jshint extension for VSC](https://marketplace.visualstudio.com/items?itemName=dbaeumer.jshint)
-- Use Docker
+- Use Docker:
+1. `docker image build -t controller .` from project root
+2. `docker container run --rm -it -p 8080:8080 controller`
