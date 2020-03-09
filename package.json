@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Controls traffic lights",
   "main": "app.js",
+  "type": "module",
   "dependencies": {
+    "jsonfile": "6.0.1",
     "ws": "7.2.1"
   },
   "devDependencies": {
@@ -11,7 +13,7 @@
     "nodemon": "^2.0.2"
   },
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "nodemon src/app.js",
     "test": "test"
   },
   "repository": {
