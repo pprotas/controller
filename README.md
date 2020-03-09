@@ -2,7 +2,7 @@
 Used in combination with [the simulation](https://github.com/pprotas/simulation)
 ### Installing:
 1. Pull
-2. `npm install `
+2. `npm install` from `./src/`
 
 ### Running:
 `npm start`
