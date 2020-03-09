@@ -17,8 +17,7 @@
     "utf-8-validate": "5.0.2"
   },
   "scripts": {
-    "start": "nodemon src/app.js",
-    "test": "test"
+    "start": "nodemon --inspect src/app.js"
   },
   "repository": {
     "type": "git",
