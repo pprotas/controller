@@ -14,4 +14,4 @@ Used in combination with [the simulation](https://github.com/pprotas/simulation)
 
 ### Cool VSCode stuff:
 * Install [jshint extension for VSC](https://marketplace.visualstudio.com/items?itemName=dbaeumer.jshint)
-* Launch the debugger after running `npm start`, VSCode will automatically restart the debugging session after you make a change
+* Launch the debugger after running `npm debug`, VSCode will automatically restart the debugging session after you make a change
