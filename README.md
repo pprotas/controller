@@ -1,8 +1,12 @@
 ## Node.js traffic controller
 Used in combination with [the simulation](https://github.com/pprotas/simulation)
+
+### Prerequisites
+* Node v13 (install using nvm)
+
 ### Installing:
 1. Pull
-2. `npm install` from `./src/`
+2. `npm install`
 
 ### Running:
 `npm start`

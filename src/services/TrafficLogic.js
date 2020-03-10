@@ -1,33 +1,19 @@
-import jsonfile from 'jsonfile';
+import * as jservice from './JsonService.js';
 
-const phasesFile = `${process.cwd()}/json/phases.json`;
-const initFile = `${process.cwd()}/json/init.json`;
+export async function performLogic(carsPerLane) {
+  var lane = await findBusiestLane(carsPerLane);
+  var possibleState = await jservice.applyPhase(lane);
 
-var latestState;
-
-export async function performLogic(state) {
-  const json = JSON.parse(state);
-  var initObject = await jsonfile.readFile(initFile);
-
-  var key = Object.keys(json).find(key => json[key] === Math.max.apply(Math, Object.values(json)));
-  initObject = await setLights(initObject, 0);
-  return initObject;
-}
-
-async function setLights(state, desiredLights, color) {
-  var phasesObject = await jsonfile.readFile(phasesFile);
-
-  if (color == 0) {
-    if (phasesObject.hasOwnProperty(key)) {
-      lights = phasesObject[key];
-    }
-  }
-
-  for (var property in initObject) {
-    if (greenLights.includes(property)) {
-      initObject[property] = 2;
-    }
-  }
+  // Hier komt de logica om de werkelijke gewenste state te maken.
+  // Houd rekening met:
+  //  - Lichten waar geen auto staat moeten niet op groen
+  //  - Oversteekplaatsen voor fietsen en voetgangers moeten niet altijd op groen (alleen als er iemand daar staat, op een timer)
+  //  - Bussen hebben voorrang (implementeer dit in de simulatie?)
+  //  - Auto's die lang wachten krijgen voorrang (implementeer dit in de simulatie?)
 
   return state;
+}
+
+async function findBusiestLane(stateObject) {
+  return Object.keys(stateObject).find(key => stateObject[key] === Math.max.apply(Math, Object.values(stateObject)));
 }

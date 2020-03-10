@@ -1,12 +1,10 @@
-import jsonfile from 'jsonfile';
-
-const initFile = `${process.cwd()}/json/init.json`;
+import * as jservice from './JsonService.js';
 
 export async function init(ws) {
-  var json = await jsonfile.readFile(initFile);
-  await sendStates(json, ws);
+  var state = await jservice.getInit();
+  await sendStates(state, ws);
 }
 
-export async function sendStates(json, ws){
-  await ws.send(JSON.stringify(json));
+export async function sendStates(state, ws) {
+  await ws.send(JSON.stringify(state));
 }
