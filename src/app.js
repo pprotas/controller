@@ -7,10 +7,10 @@ const wss = new WebSocket.Server({
 });
 
 wss.on('connection', (ws) => {
-  cservice.sendStates(ws);
+  cservice.init(ws);
 
   ws.on('message', (data) => {
-    tlogic.performLogic(data, ws);
+    var states = tlogic.performLogic(data);
+    cservice.sendStates(states, ws);
   });
 });
-
