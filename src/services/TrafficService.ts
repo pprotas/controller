@@ -1,6 +1,6 @@
-import * as jservice from './JsonService.js';
+import * as jservice from './JsonService';
 
-export async function performLogic(carsPerLane) {
+export async function performLogic(carsPerLane: any) {
   var lane = await findBusiestLane(carsPerLane);
   var possibleState = await jservice.applyPhase(lane);
 
@@ -11,9 +11,9 @@ export async function performLogic(carsPerLane) {
   //  - Bussen hebben voorrang (implementeer dit in de simulatie?)
   //  - Auto's die lang wachten krijgen voorrang (implementeer dit in de simulatie?)
 
-  return state;
+  return possibleState;
 }
 
-async function findBusiestLane(stateObject) {
+async function findBusiestLane(stateObject: any) {
   return Object.keys(stateObject).find(key => stateObject[key] === Math.max.apply(Math, Object.values(stateObject)));
 }

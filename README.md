@@ -18,4 +18,5 @@ Used in combination with [the simulation](https://github.com/pprotas/simulation)
 
 ### Cool VSCode stuff:
 * Install [jshint extension for VSC](https://marketplace.visualstudio.com/items?itemName=dbaeumer.jshint)
-* Launch the debugger after running `npm run debug`, VSCode will automatically restart the debugging session after you make a change
+* VSCode will automatically try to attach to the NodeJS process for debugging
+  * If it doesn't: You can use the 'Attach to process' Run Configuration
