@@ -1,14 +1,16 @@
 import * as WebSocket from 'ws';
-import * as jservice from './JsonService';
+import JSONService from './JsonService';
 import State from '../classes/State';
 import LaneWithColor from '../classes/LaneWithColor';
 import ILaneWithValue from '../interfaces/ILaneWithValue';
 
-export async function init(ws: WebSocket) {
-  var state: State<ILaneWithValue> = await jservice.getInit();
-  await sendStates(<State<LaneWithColor>>state, ws);
-}
+export default class CommunicationService {
+  static async init(ws: WebSocket) {
+    var state: State<ILaneWithValue> = await JSONService.getInit();
+    await this.sendStates(<State<LaneWithColor>>state, ws);
+  }
 
-export async function sendStates(state: State<LaneWithColor>, ws: WebSocket) {
-  ws.send(JSON.stringify(state.toJson()));
+  static async  sendStates(state: State<LaneWithColor>, ws: WebSocket) {
+    ws.send(JSON.stringify(state.toJson()));
+  }
 }

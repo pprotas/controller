@@ -28,7 +28,6 @@ function sendStates(ws) {
     B2: Math.floor(Math.random() * 6) + 1,
     B3: Math.floor(Math.random() * 6) + 1,
     B4: Math.floor(Math.random() * 6) + 1,
-    B5: Math.floor(Math.random() * 6) + 1,
     BB1: Math.floor(Math.random() * 6) + 1,
     C1: Math.floor(Math.random() * 6) + 1,
     C2: Math.floor(Math.random() * 6) + 1,

@@ -1,6 +1,6 @@
 import * as WebSocket from 'ws';
-import * as tlogic from './services/TrafficService';
-import * as cservice from './services/CommunicationService';
+import TrafficService from './services/TrafficService';
+import CommunicationService from './services/CommunicationService';
 import State from './classes/State';
 import LaneWithPF from './classes/LaneWithPF';
 
@@ -9,11 +9,11 @@ const wss = new WebSocket.Server({
 });
 
 wss.on('connection', async (ws: WebSocket) => {
-  await cservice.init(ws);
+  await CommunicationService.init(ws);
 
   ws.on('message', async (data: string) => {
     var carsState = new State(LaneWithPF, await JSON.parse(data));
-    var lightsState = await tlogic.performLogic(carsState);
-    cservice.sendStates(lightsState, ws);
+    var lightsState = await TrafficService.performLogic(carsState);
+    CommunicationService.sendStates(lightsState, ws);
   });
 });
