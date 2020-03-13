@@ -14,7 +14,6 @@ export async function getPhases() {
 
 export async function getPhaseForLane(lane: ILaneWithValue): Promise<[string, number[]] | undefined> {
   var phases = await getPhases();
-  console.log(lane)
   for (var property in phases) {
     if (property === lane.id) {
       return phases[property];

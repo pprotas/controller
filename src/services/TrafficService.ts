@@ -10,8 +10,8 @@ var lastStateWithColor: State<LaneWithColor>;
 
 
 
-export async function performLogic(stateWithPF: State<LaneWithPF>): Promise<State<LaneWithColor>> {
-  if (lastStateWithPF === stateWithPF) {
+export async function performLogic(currentStateWithPF: State<LaneWithPF>): Promise<State<LaneWithColor>> {
+  if (lastStateWithPF === currentStateWithPF) {
     return lastStateWithColor; // If the state is the same as last cycle, throw this cycle away
   }
 
@@ -52,68 +52,58 @@ export async function performLogic(stateWithPF: State<LaneWithPF>): Promise<Stat
 
   var lanesToBeReviewed = new State<LaneWithPF>(LaneWithPF);
 
-  Object.values(stateWithPF).forEach((laneWithPF, index) => {
-    if (laneWithPF.value > 0) { // Only add lanes with more than 0 priority
-      lanesToBeReviewed[index] = stateWithPF[index];
-      lanesToBeReviewed.count++;
+  currentStateWithPF.getAllLaneValues().forEach((laneWithPF, index) => {
+    if (laneWithPF.value > 0) { // Only look at lanes with a valid priority
+      lanesToBeReviewed.addLane(currentStateWithPF[index]);
 
       if (lastStateWithPF && lastStateWithPF[index] === laneWithPF) {
         laneWithPF.value += 1; // Add bonus priority if a car is waiting a long time. (maybe exponential scale?)
       }
-
       // If it's a bus or pedestrian crossing, add bonus priority. (maybe exponential scale?) (to be implemented)
     }
   });
 
-  lastStateWithPF = stateWithPF; // Remember the state for the next cycle
-
+  lastStateWithPF = currentStateWithPF;
 
   var lanesToTurnGreen = new State<LaneWithColor>(LaneWithColor);
 
-  // 1. Sort lanesToBeReviewed by priority
-  // In a for loop with var index = 0 (or recursive function)
-  for (var i = 0; lanesToTurnGreen.count - 1 < 4; i++) { // If lanesToTurnGreen has 4 members, stop looking
-    // 2. If lanesToTurnGreen is empty, add the id of lanesToBeReviewed[index] to it and go to the next index. Remove this lane from lanesToBeReviewed.
-    if (lanesToBeReviewed.count == 0)
-      break; //If lanesToBeReviewed is empty, stop looking
-    if (lanesToTurnGreen.count == 0) {
-      lanesToTurnGreen[lanesToTurnGreen.count] = new LaneWithColor(lanesToBeReviewed[i].id, LightColors.Green);
-      lanesToTurnGreen.count++;
-      delete lanesToBeReviewed[i];
-      lanesToBeReviewed.count--;
+  for (var i = 0; i < lanesToBeReviewed.count; i++) {
+    // Each loop 'reviews' a lane
+    var currentLaneForReview: LaneWithPF = lanesToBeReviewed[i];
+
+    if (!currentLaneForReview) continue; // Go to the next iteration if the lane is undefined
+
+    // If lanesToTurnGreen is empty it means that we are in the first iteration 
+    if (lanesToTurnGreen.isEmpty()) {
+      lanesToTurnGreen.addLane(new LaneWithColor(currentLaneForReview.id, LightColors.Green)); // So we add the most prioritized lane
     }
-    // 3. Else, look at the phases of lanesToBeReviewed[index]
+
+    // If it's not, it means we need to find the next most prioritized lane.
     else {
-      if(!lanesToBeReviewed) break;
-      if (lanesToBeReviewed[i]) {
-        var phase: [string, number[]] | undefined = await jservice.getPhaseForLane(lanesToBeReviewed[i]);
-        if (phase) {
-          // 4. If all of the lanes in lanesToTurnGreen are on this phase, add the id of it to the list and go to the next index. Remove this lane from lanesToBeReviewed.
-          var found: boolean = false;
-          var x = Object.values(lanesToTurnGreen);
-          x.forEach((o, i) => {
-            if (o.id == undefined) {
-              delete x[i];
-            }
-          })
-          x = x.map(o => o.id);
-          Object.values(lanesToTurnGreen).forEach((_, index) => {
-            if (lanesToBeReviewed[index] && Object.values(phase!).includes(Object.values(x)) && !found) {
-              lanesToTurnGreen[i] = new LaneWithColor(lanesToBeReviewed[i].id, LightColors.Green);
-              lanesToTurnGreen.count++;
-              found = true;
-            }
-          });
-          delete lanesToBeReviewed[i];
-          continue;
+      // Find the phase for the previous greenlit lane
+      //var previousPhase: [string, number[]] | undefined = await jservice.getPhaseForLane(lanesToTurnGreen.pop());
+
+      // For each lane in lanesToTurnGreen, look at the phase. The currentLaneForReview HAS to be in all of the phases.
+      var laneValues = lanesToTurnGreen.getAllLaneValues()
+      var canTurnCurrentLaneGreen = true;
+      for (var j = 0; j < laneValues.length; j++) {
+        var lane = laneValues[j];
+        if (lane)
+          var phase = await jservice.getPhaseForLane(lane);
+        else break;
+        if (!Object.values(phase!).includes(currentLaneForReview.id)) {
+          canTurnCurrentLaneGreen = false;
+          break;
         }
       }
+      if (canTurnCurrentLaneGreen)
+        lanesToTurnGreen.addLane(new LaneWithColor(currentLaneForReview.id, LightColors.Green)); // If yes, this means that there are no crossings and the lane is safe to go green.
     }
+
+    if (lanesToTurnGreen.count == 4) break;
+
+    lanesToBeReviewed.removeLane(i); // Remove the lane since it's been fully reviewed now.
   }
-
-
-  // Uncouple any combined lanes in lanesToTurnGreen. Add both of the ids to lanesToTurnGreen. (to be implemented)
-
 
   if (lanesToTurnGreen.count > 0) {
     return lanesToTurnGreen;
@@ -121,12 +111,3 @@ export async function performLogic(stateWithPF: State<LaneWithPF>): Promise<Stat
   return <State<LaneWithColor>>await jservice.getInit();
 }
 
-
-// Looks at all the {key, value} pairs in state and returns the biggest as a Lane.
-// async function findBusiestLane(stateWithPF: State<LaneWithPF>): Promise<LaneWithPF | null> {
-//   var busiestLane = Object.values(stateWithPF).find(lane => lane.value === Math.max.apply(Math, Object.values(stateWithPF).map(value => value.value)));
-//   if (busiestLane) {
-//     return new LaneWithPF(busiestLane.id, busiestLane.value);
-//   }
-//   return null;
-// }

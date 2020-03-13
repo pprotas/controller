@@ -10,6 +10,7 @@ ws.on('open', function open() {
 
 ws.on('message', function incoming(data) {
   setTimeout(function () {
+    console.log('recieved data:');
     console.log(JSON.parse(data));
     sendStates(ws);
   }, 3000);
@@ -54,6 +55,6 @@ function sendStates(ws) {
     GV3: Math.floor(Math.random() * 6) + 1,
     GV4: Math.floor(Math.random() * 6) + 1,
   };
-  //console.log(json);
+  console.log('sending');
   ws.send(JSON.stringify(json));
 }
