@@ -2,7 +2,7 @@
 Used in combination with [the simulation](https://github.com/pprotas/simulation)
 
 ### Prerequisites
-* Node v13 (install using nvm)
+* Node v13 (you can upgrade your nodejs version using nvm)
 
 ### Installing:
 1. Pull

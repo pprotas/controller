@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "nodemon --debug",
-    "debug": "node -r esm -r ts-node/register --inspect app.ts",
+    "debug": "node -r esm -r ts-node/register --inspect src/app.ts",
     "build": "tsc"
   }
 }

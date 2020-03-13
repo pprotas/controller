@@ -1,55 +1,59 @@
 const WebSocket = require('ws');
- 
+
 const ws = new WebSocket('ws://localhost:8080');
- 
+
 ws.on('open', function open() {
-  sendStates(ws);
-});
- 
-ws.on('message', function incoming(data) {
-  console.log(JSON.parse(data));
+  setTimeout(function () {
+    sendStates(ws);
+  }, 3000);
 });
 
-function sendStates(ws){
+ws.on('message', function incoming(data) {
+  setTimeout(function () {
+    console.log(JSON.parse(data));
+    sendStates(ws);
+  }, 3000);
+});
+
+function sendStates(ws) {
   var json = {
-    A1: 6,
-    A2: 5,
-    A3: 4,
-    A4: 0,
-    AB1: 0,
-    AB2: 0,
-    B1: 0,
-    B2: 0,
-    B3: 0,
-    B4: 0,
-    B5: 0,
-    BB1: 0,
-    C1: 0,
-    C2: 0,
-    C3: 0,
-    D1: 0,
-    D2: 0,
-    D3: 0,
-    E1: 0,
-    E2: 0,
-    EV1: 0,
-    EV2: 0,
-    EV3: 0,
-    EV4: 0,
-    FF1: 0,
-    FF2: 0,
-    FV1: 0,
-    FV2: 0,
-    FV3: 0,
-    FV4: 0,
-    GF1: 0,
-    GF2: 0,
-    GV1: 0,
-    GV2: 0,
-    GV3: 0,
-    GV4: 0,
-};
-  
+    A1: Math.floor(Math.random() * 6) + 1,
+    A2: Math.floor(Math.random() * 6) + 1,
+    A3: Math.floor(Math.random() * 6) + 1,
+    A4: Math.floor(Math.random() * 6) + 1,
+    AB1: Math.floor(Math.random() * 6) + 1,
+    AB2: Math.floor(Math.random() * 6) + 1,
+    B1: Math.floor(Math.random() * 6) + 1,
+    B2: Math.floor(Math.random() * 6) + 1,
+    B3: Math.floor(Math.random() * 6) + 1,
+    B4: Math.floor(Math.random() * 6) + 1,
+    B5: Math.floor(Math.random() * 6) + 1,
+    BB1: Math.floor(Math.random() * 6) + 1,
+    C1: Math.floor(Math.random() * 6) + 1,
+    C2: Math.floor(Math.random() * 6) + 1,
+    C3: Math.floor(Math.random() * 6) + 1,
+    D1: Math.floor(Math.random() * 6) + 1,
+    D2: Math.floor(Math.random() * 6) + 1,
+    D3: Math.floor(Math.random() * 6) + 1,
+    E1: Math.floor(Math.random() * 6) + 1,
+    E2: Math.floor(Math.random() * 6) + 1,
+    EV1: Math.floor(Math.random() * 6) + 1,
+    EV2: Math.floor(Math.random() * 6) + 1,
+    EV3: Math.floor(Math.random() * 6) + 1,
+    EV4: Math.floor(Math.random() * 6) + 1,
+    FF1: Math.floor(Math.random() * 6) + 1,
+    FF2: Math.floor(Math.random() * 6) + 1,
+    FV1: Math.floor(Math.random() * 6) + 1,
+    FV2: Math.floor(Math.random() * 6) + 1,
+    FV3: Math.floor(Math.random() * 6) + 1,
+    FV4: Math.floor(Math.random() * 6) + 1,
+    GF1: Math.floor(Math.random() * 6) + 1,
+    GF2: Math.floor(Math.random() * 6) + 1,
+    GV1: Math.floor(Math.random() * 6) + 1,
+    GV2: Math.floor(Math.random() * 6) + 1,
+    GV3: Math.floor(Math.random() * 6) + 1,
+    GV4: Math.floor(Math.random() * 6) + 1,
+  };
+  //console.log(json);
   ws.send(JSON.stringify(json));
 }
-
