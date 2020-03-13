@@ -1,8 +1,9 @@
 import * as jsonfile from 'jsonfile';
-import Lane from '../interfaces/Lane';
+import ILaneWithValue from '../interfaces/ILaneWithValue';
 import LightColors from '../enums/LightColors';
 import State from '../classes/State';
-import ColorForLane from '../classes/ColorForLane';
+import LaneWithColor from '../classes/LaneWithColor';
+import LaneWithValue from '../classes/LaneWithValue';
 
 const phasesFile = `${process.cwd()}/public/json/phases.json`;
 const initFile = `${process.cwd()}/public/json/init.json`;
@@ -11,30 +12,34 @@ export async function getPhases() {
   return await jsonfile.readFile(phasesFile);
 }
 
-export async function getPhaseForLane(lane: Lane) {
+export async function getPhaseForLane(lane: ILaneWithValue): Promise<[string, number[]] | undefined> {
   var phases = await getPhases();
+  console.log(lane)
   for (var property in phases) {
     if (property === lane.id) {
       return phases[property];
     }
   }
+  return undefined;
 }
 
-export async function getInit(): Promise<State<Lane>> {
+export async function getInit(): Promise<State<LaneWithValue>> {
   var jsonObject = await jsonfile.readFile(initFile);
-  return new State(ColorForLane, jsonObject);
+  var x = new State<LaneWithValue>(LaneWithValue, jsonObject);
+  return x;
 }
 
 
 // Haalt alle mogelijke groene lichten op, dit betekent niet dat deze lichten ook daadwerkelijk groen moeten worden.
-export async function applyPhase(lane: Lane): Promise<State<ColorForLane>> {
+export async function applyPhase(lane: ILaneWithValue): Promise<State<LaneWithColor>> {
   var phase = await getPhaseForLane(lane);
   var init = await getInit();
 
   Object.values(init).forEach(lane => {
+    if(phase)
     if(phase.includes(lane.id))
       lane.value = LightColors.Green;
   });
 
-  return <State<ColorForLane>>init;
+  return <State<LaneWithColor>>init;
 }
