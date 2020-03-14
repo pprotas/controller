@@ -5,19 +5,21 @@ export default class CombinedLanesWithPF extends LaneWithPF {
 
   public componentLanesWithPF: LaneWithPF[];
 
+  private _value:number = 0;
+
   get value(): number {
-    this.componentLanesWithPF.forEach(lane => {
-      this.value += lane.value;
-    });
-    return this.value;
+    return this._value;
   }
   
   set value(value: number) {
-    this.value = value;
+    this._value = value;
   }
 
   constructor(public id: string, ...laneWithPF: LaneWithPF[]) {
     super(id, 0);
     this.componentLanesWithPF = laneWithPF;
+    this.componentLanesWithPF.forEach(lane => {
+      this._value += lane.value;
+    });
   }
 }

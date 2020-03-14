@@ -6,8 +6,9 @@ import LaneWithColor from '../classes/LaneWithColor';
 import LaneWithValue from '../classes/LaneWithValue';
 
 export default class JSONService {
-  private static  phasesFile = `${process.cwd()}/public/json/phases.json`;
+  private static phasesFile = `${process.cwd()}/public/json/phases.json`;
   private static initFile = `${process.cwd()}/public/json/init.json`;
+  private static combinationsFile = `${process.cwd()}/public/json/combinations.json`;
 
   static getPhases() {
     return jsonfile.readFileSync(this.phasesFile);
@@ -28,6 +29,9 @@ export default class JSONService {
     return new State<LaneWithValue>(LaneWithValue, jsonObject);
   }
 
+  static async getCombinations() {
+    return await jsonfile.readFile(this.combinationsFile);
+  }
 
   // Haalt alle mogelijke groene lichten op, dit betekent niet dat deze lichten ook daadwerkelijk groen moeten worden.
   static async applyPhase(lane: ILaneWithValue): Promise<State<LaneWithColor>> {

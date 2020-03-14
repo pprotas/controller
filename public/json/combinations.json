@@ -1,0 +1,98 @@
+{
+    "A2": {
+        "partners": ["A3"],
+        "newId": "A23"
+    },
+    "A3": {
+        "partners": ["A2"],
+        "newId": "A23"
+    },
+    "AB1": {
+        "partners": ["AB2"],
+        "newId": "AB12"
+    },
+    "AB2": {
+        "partners": ["AB1"],
+        "newId": "AB12"
+    },
+    "B2": {
+        "partners": ["B3"],
+        "newId": "B23"
+    },
+    "B3": {
+        "partners": ["B2"],
+        "newId": "B23"
+    },
+    "BB1": {
+        "partners": ["B2", "B3"],
+        "newId": "BB1B23"
+    },
+    "E1": {
+        "partners": ["E2", "EV1", "EV2", "EV3", "EV4"],
+        "newId": "E"
+    },
+    "E2": {
+        "partners": ["E1", "EV1", "EV2", "EV3", "EV4"],
+        "newId": "E"
+    },
+    "EV1": {
+        "partners": ["E1", "E2", "EV2", "EV3", "EV4"],
+        "newId": "E"
+    },
+    "EV2": {
+        "partners": ["E1", "E2", "EV1", "EV3", "EV4"],
+        "newId": "E"
+    },
+    "EV3": {
+        "partners": ["E1", "E2", "EV1", "EV2", "EV4"],
+        "newId": "E"
+    },
+    "EV4": {
+        "partners": ["E1", "E2", "EV1", "EV2", "EV3"],
+        "newId": "E"
+    },
+    "FV1": {
+        "partners": ["FV2", "FV3", "FV4", "FF1", "FF2"],
+        "newId": "F"
+    },
+    "FV2": {
+        "partners": ["FV1", "FV3", "FV4", "FF1", "FF2"],
+        "newId": "F"
+    },
+    "FV3": {
+        "partners": ["FV2", "FV2", "FV4", "FF1", "FF2"],
+        "newId": "F"
+    },
+    "FF1": {
+        "partners": ["FV2", "FV2", "FV3", "FV4", "FF2"],
+        "newId": "F"
+    },
+    "FF2": {
+        "partners": ["FV2", "FV2", "FV3", "FV4", "FF1"],
+        "newId": "F"
+    },
+    "GV1": {
+        "partners": ["GV2", "GV3", "GV4", "GF1", "GF2"],
+        "newId": "G"
+    },
+    "GV2": {
+        "partners": ["GV1", "GV3", "GV4", "GF1", "GF2"],
+        "newId": "G"
+    },
+    "GV3": {
+        "partners": ["GV1", "GV2", "GV4", "GF1", "GF2"],
+        "newId": "G"
+    },
+    "GV4": {
+        "partners": ["GV1", "GV2", "GV3", "GF1", "GF2"],
+        "newId": "G"
+    },
+    "GF1": {
+        "partners": ["GV1", "GV2", "GV3", "GV4", "GF2"],
+        "newId": "G"
+    },
+    "GF2": {
+        "partners": ["GV1", "GV2", "GV3", "GV4", "GF1"],
+        "newId": "G"
+    }
+}

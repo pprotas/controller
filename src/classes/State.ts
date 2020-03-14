@@ -1,4 +1,7 @@
 import LaneWithValue from "./LaneWithValue";
+import CombinedLanesWithPF from "./CombinedLanesWithPF";
+import LaneWithColor from "./LaneWithColor";
+import LightColors from "../enums/LightColors";
 
 export default class State<Lane> {
 
@@ -19,14 +22,35 @@ export default class State<Lane> {
     }
   }
 
-  addLane(lane: Lane, index?: number): any {
+  getSortedState(): State<Lane> {
+    var sortedLanes = <[Lane]>Object.values(this)
+      .sort((a, b) => b.value - a.value);
+    var sortedState= new State<Lane>();
+    sortedLanes.forEach(lane => sortedState.addLane(lane));
+    return sortedState;
+  }
+
+  getSplitUpState(): State<LaneWithColor> {
+    var partners: LaneWithColor[] = [];
+    this.getAllLaneValues().forEach(lane => {
+      if(lane instanceof CombinedLanesWithPF){
+        lane.componentLanesWithPF.forEach(lane => partners.push(new LaneWithColor(lane.id, LightColors.Green)));
+      }
+      else partners.push(new LaneWithColor(lane.id, LightColors.Green));
+    });
+    var state = new State<LaneWithColor>();
+    partners.forEach(lane => state.addLane(lane));
+    return state;
+  }
+
+  addLane(lane: Lane, index?: number): void {
     if (!index)
       index = this.count;
     this[index] = lane;
     this._count++;
   }
 
-  removeLane(index: number): any {
+  removeLane(index: number): void {
     delete this[index];
     this._count--;
   }
@@ -44,6 +68,12 @@ export default class State<Lane> {
     })
 
     return lanes;
+  }
+
+  getAllCombinations(): CombinedLanesWithPF[] {
+    var x = this.getAllLaneValues();
+    var y = x.filter(lane => lane instanceof CombinedLanesWithPF);;
+    return <CombinedLanesWithPF[]>y;
   }
 
   getAllLaneEntries(): [string, Lane][] {
