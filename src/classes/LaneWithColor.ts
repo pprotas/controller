@@ -1,8 +1,8 @@
 import LightColors from "../enums/LightColors";
 import LaneWithValue from "./LaneWithValue";
-
 export default class LaneWithColor extends LaneWithValue {
-  readonly isLaneWithColor: boolean = true;
+  //@ts-ignore
+  isNotLaneWithPF: boolean = true;
 
   constructor(public id: string, public value: LightColors.Red | LightColors.Orange | LightColors.Green) {
     super(id, value);

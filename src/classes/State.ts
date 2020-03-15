@@ -1,9 +1,11 @@
-import LaneWithValue from "./LaneWithValue";
-import CombinedLanesWithPF from "./CombinedLanesWithPF";
+import CombinedLane from "./CombinedLane";
+import ILaneWithValue from "../interfaces/ILaneWithValue";
 import LaneWithColor from "./LaneWithColor";
 import LightColors from "../enums/LightColors";
+import JSONService from "../services/JsonService";
+import LaneWithValue from "./LaneWithValue";
 
-export default class State<Lane> {
+export default class State<Lane extends ILaneWithValue> {
 
   [index: number]: Lane
 
@@ -14,31 +16,44 @@ export default class State<Lane> {
 
   constructor(type?: { new(id: string, value: number): Lane; }, object?: object) {
     if (object && type) {
-      Object.entries(object)
-        .sort((a, b) => b[1] - a[1])
-        .forEach((parameter: any) => {
-          this.addLane(new type(parameter[0], parameter[1]));
-        });
+      try {
+        Object.entries(object)
+          .sort((a, b) => b[1] - a[1])
+          .forEach((parameter: any) => {
+            this.addLane(new type(parameter[0], parameter[1]));
+          });
+      }
+      catch (e) {
+        throw new Error("Invalid object or type passed as parameter for State");
+      }
     }
   }
 
-  getSortedState(): State<Lane> {
-    var sortedLanes = <[Lane]>Object.values(this)
-      .sort((a, b) => b.value - a.value);
-    var sortedState= new State<Lane>();
-    sortedLanes.forEach(lane => sortedState.addLane(lane));
-    return sortedState;
+  toStateWithColor() {
+    var state = new State<LaneWithColor>();
+    this.getAllLanes().forEach(lane => {
+      lane.value ? state.addLane(new LaneWithColor(lane.id, LightColors.Green)) : state.addLane(new LaneWithColor(lane.id, LightColors.Red));
+    });
+    return state;
   }
 
-  getSplitUpState(): State<LaneWithColor> {
-    var partners: LaneWithColor[] = [];
-    this.getAllLaneValues().forEach(lane => {
-      if(lane instanceof CombinedLanesWithPF){
-        lane.componentLanesWithPF.forEach(lane => partners.push(new LaneWithColor(lane.id, LightColors.Green)));
+  getSortedState(): State<Lane> {
+    var sortedLanes = this.getAllLanes()
+      .sort((a, b) => b.value - a.value);
+    var sortedState = new State();
+    sortedLanes.forEach(lane => sortedState.addLane(lane));
+    return <State<Lane>>sortedState;
+  }
+
+  getSplitUpState(): State<Lane> {
+    var partners: Lane[] = [];
+    this.getAllLanes().forEach(lane => {
+      if (lane instanceof CombinedLane) {
+        (<Lane[]>lane.partners).forEach(lane => partners.push(lane));
       }
-      else partners.push(new LaneWithColor(lane.id, LightColors.Green));
+      else partners.push(lane);
     });
-    var state = new State<LaneWithColor>();
+    var state = new State<Lane>();
     partners.forEach(lane => state.addLane(lane));
     return state;
   }
@@ -56,10 +71,10 @@ export default class State<Lane> {
   }
 
   getAllLaneIds(): string[] {
-    return this.getAllLaneValues().map(lane => lane.id);
+    return this.getAllLanes().map(lane => lane.id);
   }
 
-  getAllLaneValues(): LaneWithValue[] {
+  getAllLanes(): Lane[] {
     var lanes = Object.values(this);
     lanes.forEach((lane, index) => {
       if (lane.id == undefined) {
@@ -70,14 +85,21 @@ export default class State<Lane> {
     return lanes;
   }
 
-  getAllCombinations(): CombinedLanesWithPF[] {
-    var x = this.getAllLaneValues();
-    var y = x.filter(lane => lane instanceof CombinedLanesWithPF);;
-    return <CombinedLanesWithPF[]>y;
+  getAllCombinations(): Lane[] {
+    return this.getAllLanes().filter(lane => lane instanceof CombinedLane);
   }
 
   getAllLaneEntries(): [string, Lane][] {
     return Object.entries(this);
+  }
+
+  async fillEmptyLanes() {
+    var init = await JSONService.getInit();
+    init.getAllLaneIds().forEach(laneId => {
+      if(!this.getAllLaneIds().includes(laneId)) {
+        this.addLane(<Lane>new LaneWithValue(laneId, 0));
+      }
+    })
   }
 
   pop(): Lane {
