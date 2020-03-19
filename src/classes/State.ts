@@ -29,17 +29,36 @@ export default class State<Lane extends ILaneWithValue> {
     }
   }
 
-  toStateWithColor() {
+  isEmptyLane(): boolean {
+    if(!this.getAllLanes().map(lane => lane.value).includes(0)){
+      return true;
+    }
+    return false;
+  }
+
+  toStateWithColor(color: LightColors) {
     var state = new State<LaneWithColor>();
     this.getAllLanes().forEach(lane => {
-      lane.value ? state.addLane(new LaneWithColor(lane.id, LightColors.Green)) : state.addLane(new LaneWithColor(lane.id, LightColors.Red));
+      lane.value ? state.addLane(new LaneWithColor(lane.id, color)) : state.addLane(new LaneWithColor(lane.id, LightColors.Red));
     });
     return state;
   }
 
-  getSortedState(): State<Lane> {
+  getStateSortedByValue(): State<Lane> {
     var sortedLanes = this.getAllLanes()
       .sort((a, b) => b.value - a.value);
+    var sortedState = new State();
+    sortedLanes.forEach(lane => sortedState.addLane(lane));
+    return <State<Lane>>sortedState;
+  }
+
+  getStateSortedAlphabetically(): State<Lane> {
+    var sortedLanes = this.getAllLanes()
+      .sort((a, b) => {
+        var textA = a.id.toUpperCase();
+        var textB = b.id.toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
     var sortedState = new State();
     sortedLanes.forEach(lane => sortedState.addLane(lane));
     return <State<Lane>>sortedState;
@@ -96,7 +115,7 @@ export default class State<Lane extends ILaneWithValue> {
   async fillEmptyLanes() {
     var init = await JSONService.getInit();
     init.getAllLaneIds().forEach(laneId => {
-      if(!this.getAllLaneIds().includes(laneId)) {
+      if (!this.getAllLaneIds().includes(laneId)) {
         this.addLane(<Lane>new LaneWithValue(laneId, 0));
       }
     })

@@ -2,16 +2,12 @@ const WebSocket = require('ws');
 
 const ws = new WebSocket('ws://localhost:8080');
 
-ws.on('open', function open() {
-  setTimeout(function () {
-    sendStates(ws);
-  }, 500);
-});
-
 ws.on('message', function incoming(data) {
+  setTimeout(function () {
     console.log('recieved data:');
     console.log(JSON.parse(data));
     sendStates(ws);
+  }, 2000);
 });
 
 function sendStates(ws) {

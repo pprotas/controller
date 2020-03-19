@@ -3,14 +3,14 @@ import LaneWithPF from '../classes/LaneWithPF';
 import State from '../classes/State';
 import LaneWithColor from '../classes/LaneWithColor';
 import CombinedLane from '../classes/CombinedLane';
+import LaneWithValue from '../classes/LaneWithValue';
 
 export default class TrafficService {
   private static lastStateWithPF: State<LaneWithPF> = new State();
-  private static lastStateWithColor: State<LaneWithColor> = new State();
 
-  static async performLogic(currentStateWithPF: State<LaneWithPF>): Promise<State<LaneWithColor>> {
+  static async performLogic(currentStateWithPF: State<LaneWithPF>): Promise<State<LaneWithValue>> {
     if (this.lastStateWithPF === currentStateWithPF) {
-      return this.lastStateWithColor; // If the state is the same as last cycle, throw this cycle away
+      return this.lastStateWithPF.getStateSortedAlphabetically(); // If the state is the same as last cycle, throw this cycle away
     }
 
     // Remember this state for next cycle
@@ -31,32 +31,36 @@ export default class TrafficService {
     lanesToTurnGreen = lanesToTurnGreen.getSplitUpState();
     await lanesToTurnGreen.fillEmptyLanes();
 
-    return lanesToTurnGreen.count ? lanesToTurnGreen.toStateWithColor() : <State<LaneWithColor>>await JSONService.getInit();
+    return lanesToTurnGreen.count ? lanesToTurnGreen : <State<LaneWithColor>>await JSONService.getInit();
   }
 
   static async combineLanes(lanes: LaneWithPF[]) {
     var lanesToBeCombined = await JSONService.getCombinations();
-
+    var combinedLanes: LaneWithPF[] = [];
+    
     lanes.forEach(lane => {
       if (Object.keys(lanesToBeCombined).includes(lane.id)) { // If the lane needs to be combined, combine all this lane and all of its partners into one lane
         var combinations = lanesToBeCombined[lane.id]; // The combinations for this specific lane
         var partners: LaneWithPF[] = [lane]; // Make an array with all the partners, and add the current lane to it
         combinations['partners'].forEach((laneId: string) => {
-          var value = lanes.find(lane => lane.id === laneId)?.value ?? 0;
-          partners.push(new LaneWithPF(laneId, value));
+          var partnersIds = partners.map(lane => lane.id);
+          if(!partnersIds.includes(laneId)){
+            var value = lanes.find(lane => lane.id === laneId)?.value ?? 0;
+            partners.push(new LaneWithPF(laneId, value));
+          }
         });
-        if (!lanes.some(lane => lane.id === combinations['newId']))
-        lanes.push(new CombinedLane(combinations['newId'], ...partners));
+        if (!combinedLanes.some(lane => lane.id === combinations['newId']))
+        combinedLanes.push(new CombinedLane(combinations['newId'], ...partners));
       }
-      else lanes.push(lane); // If the lane does not have to be combined, just push it as a normal lane
+      else combinedLanes.push(lane); // If the lane does not have to be combined, just push it as a normal lane
     });
 
-    return lanes;
+    return combinedLanes;
   }
 
   static async reviewLanes(lanes: State<LaneWithPF>): Promise<State<LaneWithPF>> {
     // Sort the state by value from highest to lowest
-    lanes = lanes.getSortedState();
+    lanes = lanes.getStateSortedByValue();
     var lanesToTurnGreen = new State<LaneWithPF>();
 
     for (var i = 0; i < lanes.count || lanesToTurnGreen.count === 4; i++) {
