@@ -15,8 +15,8 @@ wss.on('connection', async (ws: WebSocket) => {
   TimingService.startTimer();
 
   ws.on('message', async (data: string) => {
-    TimingService.carsAtIntersection = true;
     var carsState = new State(LaneWithPF, await JSON.parse(data));
     CommunicationService.lastState = await TrafficService.performLogic(carsState);
+    if(!CommunicationService.lastState.isEmptyState()) TimingService.carsAtIntersection = true;
   });
 });

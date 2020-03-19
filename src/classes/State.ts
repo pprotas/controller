@@ -29,7 +29,7 @@ export default class State<Lane extends ILaneWithValue> {
     }
   }
 
-  isEmptyLane(): boolean {
+  isEmptyState(): boolean {
     if(!this.getAllLanes().map(lane => lane.value).includes(0)){
       return true;
     }
@@ -123,13 +123,6 @@ export default class State<Lane extends ILaneWithValue> {
 
   pop(): Lane {
     return this[this.count - 1];
-  }
-
-  isEmpty(): boolean {
-    if (this.count) {
-      return false;
-    }
-    return true;
   }
 
   toJson(): string {

@@ -68,7 +68,7 @@ export default class TrafficService {
       var currentLaneForReview = lanes[i];
 
       // If lanesToTurnGreen is empty it means that we are in the first iteration 
-      if (lanesToTurnGreen.isEmpty()) {
+      if (lanesToTurnGreen.isEmptyState()) {
         lanesToTurnGreen.addLane(currentLaneForReview); // So we add the most prioritized lane
       }
 
