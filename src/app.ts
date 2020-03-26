@@ -1,22 +1,19 @@
-import * as WebSocket from 'ws';
-import TrafficService from './services/TrafficService';
-import CommunicationService from './services/CommunicationService';
-import TimingService from './services/TimingService'
-import State from './classes/State';
-import LaneWithPF from './classes/LaneWithPF';
+import ControllerAsClient from './classes/ControllerAsClient';
+import ControllerAsServer from './classes/ControllerAsServer';
+import readlineSync from 'readline-sync';
+import * as url from 'url';
 
-const wss = new WebSocket.Server({
-  port: 8080
-});
+var controller: ControllerAsClient | ControllerAsServer | undefined = undefined;
 
+var answer = readlineSync.question("Do you want to start the controller as (1) client or (2) server?\n");
 
-wss.on('connection', async (ws: WebSocket) => {
-  await CommunicationService.init(ws);
-  TimingService.startTimer();
+if (answer === "1") {
+  var ip = readlineSync.question("What is the ip?\n");
+  controller = new ControllerAsClient(new url.URL(ip));
+}
+else if (answer === "2") {
+  var port = readlineSync.question("What port?\n");
+  controller = new ControllerAsServer(Number.parseInt(port));
+}
 
-  ws.on('message', async (data: string) => {
-    var carsState = new State(LaneWithPF, await JSON.parse(data));
-    CommunicationService.lastState = await TrafficService.performLogic(carsState);
-    if(!CommunicationService.lastState.isEmptyState()) TimingService.carsAtIntersection = true;
-  });
-});
+controller!.listen();

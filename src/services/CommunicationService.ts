@@ -1,4 +1,4 @@
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 import JSONService from './JsonService';
 import State from '../classes/State';
 import LaneWithColor from '../classes/LaneWithColor';
