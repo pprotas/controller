@@ -3,7 +3,7 @@ import ControllerAsServer from './classes/ControllerAsServer';
 import readlineSync from 'readline-sync';
 import * as url from 'url';
 
-var controller: ControllerAsClient | ControllerAsServer | undefined = undefined;
+var controller: ControllerAsClient | ControllerAsServer;
 
 var answer = readlineSync.question("Do you want to start the controller as (1) client or (2) server?\n");
 
@@ -13,7 +13,10 @@ if (answer === "1") {
 }
 else if (answer === "2") {
   var port = readlineSync.question("What port?\n");
-  controller = new ControllerAsServer(Number.parseInt(port));
+  controller = new ControllerAsServer(parseInt(port));
 }
-
-controller!.listen();
+else {
+  console.log("Garbage input, starting as server");
+  controller = new ControllerAsServer(8080);
+}
+controller.listen();
