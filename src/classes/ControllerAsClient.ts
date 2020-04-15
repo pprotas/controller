@@ -13,12 +13,12 @@ export default class ControllerAsServer {
 
     public listen() {
         console.log(`listening to ${this.url}`);
-        this.ws.on('open', async () => {
-            await CommunicationService.init(this.ws);
+        this.ws.on('open',  () => {
+             CommunicationService.init(this.ws);
             TimingService.startTimer();
         });
 
-        this.ws.on('message', async (data: string) => {
+        this.ws.on('message',  (data: string) => {
             console.log(`${data}`);
         });
     }

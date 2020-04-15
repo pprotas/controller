@@ -14,7 +14,7 @@ export default class State<Lane extends ILaneWithValue> {
     return this._count;
   }
 
-  constructor(type?: { new(id: string, value: number): Lane; }, object?: object) {
+  constructor(type?: { new(id: string, value: number): Lane; }, object?: object, fillEmptyState: boolean = false) {
     if (object && type) {
       try {
         Object.entries(object)
@@ -27,13 +27,24 @@ export default class State<Lane extends ILaneWithValue> {
         throw new Error("Invalid object or type passed as parameter for State");
       }
     }
+    if(fillEmptyState) {
+      this.fillEmptyLanes();
+    }
   }
 
+  getLaneById(id: string): Lane | undefined {
+    var x = this.getAllLanes()
+    var y = x.find(lane => lane?.id === id );
+
+    return y;
+  }
+
+
   isEmptyState(): boolean {
-    if(!this.getAllLanes().map(lane => lane.value).includes(0)){
-      return true;
+    if (this.getAllLanes().map(lane => lane.value).some(value => value > 0)) {
+      return false;
     }
-    return false;
+    return true;
   }
 
   toStateWithColor(color: LightColors) {
@@ -112,8 +123,8 @@ export default class State<Lane extends ILaneWithValue> {
     return Object.entries(this);
   }
 
-  async fillEmptyLanes() {
-    var init = await JSONService.getInit();
+  fillEmptyLanes() {
+    var init = JSONService.getInit();
     init.getAllLaneIds().forEach(laneId => {
       if (!this.getAllLaneIds().includes(laneId)) {
         this.addLane(<Lane>new LaneWithValue(laneId, 0));

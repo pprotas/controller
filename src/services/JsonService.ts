@@ -24,19 +24,19 @@ export default class JSONService {
     return undefined;
   }
 
-  static async getInit(): Promise<State<LaneWithValue>> {
-    var jsonObject = await jsonfile.readFile(this.initFile);
+  static getInit(): State<LaneWithValue> {
+    var jsonObject = jsonfile.readFileSync(this.initFile);
     return new State<LaneWithValue>(LaneWithValue, jsonObject);
   }
 
-  static async getCombinations() {
-    return await jsonfile.readFile(this.combinationsFile);
+  static getCombinations() {
+    return jsonfile.readFileSync(this.combinationsFile);
   }
 
   // Haalt alle mogelijke groene lichten op, dit betekent niet dat deze lichten ook daadwerkelijk groen moeten worden.
-  static async applyPhase(lane: ILaneWithValue): Promise<State<LaneWithColor>> {
+  static applyPhase(lane: ILaneWithValue): State<LaneWithColor> {
     var phase = this.getPhaseForLane(lane);
-    var init = await this.getInit();
+    var init = this.getInit();
 
     Object.values(init).forEach(lane => {
       if (phase)

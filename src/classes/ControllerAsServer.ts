@@ -1,31 +1,29 @@
 import WebSocket from 'ws';
-import TrafficService from '../services/TrafficService';
 import CommunicationService from '../services/CommunicationService';
 import TimingService from '../services/TimingService'
-import State from './State';
-import LaneWithPF from './LaneWithPF';
+import TrafficService from '../services/TrafficService';
 
 export default class ControllerAsServer {
 
-    private wss: WebSocket.Server;
+  private wss: WebSocket.Server;
 
-    constructor(public port: number) {
-        this.wss = new WebSocket.Server({
-            port: port
-        });
-    }
+  constructor(public port: number) {
+    this.wss = new WebSocket.Server({
+      port: port
+    });
+    TimingService.startTimer();
+    TrafficService.masterPrioState.fillEmptyLanes();
+  }
 
-    public listen() {
-        console.log(`listening on ${this.port}`);
-        this.wss.on('connection', async (ws: WebSocket) => {
-            await CommunicationService.init(ws);
-            TimingService.startTimer();
+  public listen() {
+    console.log(`listening on ${this.port}`);
+    this.wss.on('connection', (ws: WebSocket) => {
+      CommunicationService.ws = ws;
 
-            ws.on('message', async (data: string) => {
-                var carsState = new State(LaneWithPF, await JSON.parse(data));
-                CommunicationService.lastState = await TrafficService.performLogic(carsState);
-                if (!CommunicationService.lastState.isEmptyState()) TimingService.carsAtIntersection = true;
-            });
-        });
-    }
+      ws.on('message', (data: string) => {
+        console.log(data);
+        TimingService.handle(data);
+      });
+    });
+  }
 }
