@@ -3,8 +3,8 @@ import * as url from 'url';
 import CommunicationService from '../services/CommunicationService';
 import TimingService from '../services/TimingService'
 
-export default class ControllerAsServer {
-
+// Controller class used for the required communication tests. Allows the user to connect this controller to a remote server
+export default class ControllerAsClient {
     private ws: WebSocket;
 
     constructor(public url: url.URL) {

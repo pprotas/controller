@@ -33,7 +33,7 @@ export default class JSONService {
     return jsonfile.readFileSync(this.combinationsFile);
   }
 
-  // Haalt alle mogelijke groene lichten op, dit betekent niet dat deze lichten ook daadwerkelijk groen moeten worden.
+  // Gets all POSSIBLE green lights for the chosen lane.
   static applyPhase(lane: ILaneWithValue): State<LaneWithColor> {
     var phase = this.getPhaseForLane(lane);
     var init = this.getInit();

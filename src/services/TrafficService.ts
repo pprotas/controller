@@ -4,14 +4,15 @@ import State from '../classes/State';
 import CombinedLane from '../classes/CombinedLane';
 import LaneWithValue from '../classes/LaneWithValue';
 
+// Main traffic light logic
 export default class TrafficService {
   public static masterPrioState: State<LaneWithPF> = new State();
 
   static performLogic(currentStateWithPF: State<LaneWithPF>): State<LaneWithValue> {
-    // Combine all lanes
+    // Combine lanes that can be counted as one lane (example: A2 and A3)
     var combinedCurrentLanesWithPF: LaneWithPF[] = TrafficService.combineLanes(this.masterPrioState.getAllLanes());
 
-    //Add only lanes with a positive value to be reviewed
+    //Add only lanes with a positive value to be reviewed, lanes with no cars don't need to turn green.
     var lanesToBeReviewed = new State<LaneWithPF>();
 
     combinedCurrentLanesWithPF.forEach(lane => {
@@ -20,10 +21,15 @@ export default class TrafficService {
 
     // The lanes with the highest values and no crossings can turn green
     var lanesToTurnGreen = TrafficService.reviewLanes(lanesToBeReviewed);
+
+    // Split the combined lanes so the state is ready to be sent to controller
     lanesToTurnGreen = lanesToTurnGreen.getSplitUpState();
+
+    // The state doesn't contain all lanes yet, so we add them here
     lanesToTurnGreen.fillEmptyLanes();
 
     // Remember which lanes didn't turn green for next turn, and give those a higher priority
+    // Small algorithm that gives lanes a bonus based on how long the cars are waiting
     lanesToTurnGreen.getAllLanes().forEach(lane => {
       if (lane.value <= 1) {
         var x = this.masterPrioState.getLaneById(lane.id);
@@ -94,7 +100,7 @@ export default class TrafficService {
           lanesToTurnGreen.addLane(currentLaneForReview); // If yes, this means that there are no crossings and the lane is safe to go green.
       }
 
-      lanes.removeLane(i); // Remove the lane since it's been fully reviewed now.
+      lanes.removeLane(i); // Remove the lane from the review list since it's been fully reviewed now.
     }
 
     return lanesToTurnGreen;

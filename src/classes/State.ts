@@ -6,7 +6,6 @@ import JSONService from "../services/JsonService";
 import LaneWithValue from "./LaneWithValue";
 
 export default class State<Lane extends ILaneWithValue> {
-
   [index: number]: Lane
 
   private _count: number = 0;
@@ -38,7 +37,6 @@ export default class State<Lane extends ILaneWithValue> {
 
     return y;
   }
-
 
   isEmptyState(): boolean {
     if (this.getAllLanes().map(lane => lane.value).some(value => value > 0)) {

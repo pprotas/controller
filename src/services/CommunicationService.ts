@@ -9,6 +9,7 @@ export default class CommunicationService {
   public static ws: WebSocket;
   public static currentState: State<LaneWithValue> = new State();
 
+  // Send empty state
   static init(ws: WebSocket) {
     this.ws = ws;
     var state = JSONService.getInit();

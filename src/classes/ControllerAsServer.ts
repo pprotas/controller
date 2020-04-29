@@ -3,6 +3,8 @@ import CommunicationService from '../services/CommunicationService';
 import TimingService from '../services/TimingService'
 import TrafficService from '../services/TrafficService';
 
+// The main controller class. Allows the user to host the controller on a port.
+// Accepts incoming connections from a simulation, and handles the incoming data
 export default class ControllerAsServer {
 
   private wss: WebSocket.Server;
@@ -11,7 +13,10 @@ export default class ControllerAsServer {
     this.wss = new WebSocket.Server({
       port: port
     });
+    
+    // The traffic light timer will always be running in the background
     TimingService.startTimer();
+
     TrafficService.masterPrioState.fillEmptyLanes();
   }
 
