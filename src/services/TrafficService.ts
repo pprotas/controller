@@ -31,6 +31,10 @@ export default class TrafficService {
     // Remember which lanes didn't turn green for next turn, and give those a higher priority
     // Small algorithm that gives lanes a bonus based on how long the cars are waiting
     lanesToTurnGreen.getAllLanes().forEach(lane => {
+      if(lane.id === "AB1" || lane.id === "AB2" || lane.id === "BB1") {
+        lane.value * 10;
+      }
+      
       if (lane.value <= 1) {
         var x = this.masterPrioState.getLaneById(lane.id);
         var y = currentStateWithPF.getLaneById(lane.id);

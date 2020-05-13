@@ -59,6 +59,10 @@
         "partners": ["FV2", "FV2", "FV4", "FF1", "FF2"],
         "newId": "F"
     },
+    "FV4": {
+        "partners": ["FV2", "FV2", "FV3", "FF1", "FF2"],
+        "newId": "F"
+    },
     "FF1": {
         "partners": ["FV2", "FV2", "FV3", "FV4", "FF2"],
         "newId": "F"
