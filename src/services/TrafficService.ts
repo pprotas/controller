@@ -9,6 +9,12 @@ export default class TrafficService {
   public static masterPrioState: State<LaneWithPF> = new State();
 
   static performLogic(currentStateWithPF: State<LaneWithPF>): State<LaneWithValue> {
+    currentStateWithPF.getAllLanes().forEach(lane => {
+      if(lane.id === "AB1" || lane.id === "AB2" || lane.id === "BB1") {
+        lane.value *= 100;
+      }
+    });
+
     // Combine lanes that can be counted as one lane (example: A2 and A3)
     var combinedCurrentLanesWithPF: LaneWithPF[] = TrafficService.combineLanes(this.masterPrioState.getAllLanes());
 
@@ -31,10 +37,6 @@ export default class TrafficService {
     // Remember which lanes didn't turn green for next turn, and give those a higher priority
     // Small algorithm that gives lanes a bonus based on how long the cars are waiting
     lanesToTurnGreen.getAllLanes().forEach(lane => {
-      if(lane.id === "AB1" || lane.id === "AB2" || lane.id === "BB1") {
-        lane.value * 10;
-      }
-      
       if (lane.value <= 1) {
         var x = this.masterPrioState.getLaneById(lane.id);
         var y = currentStateWithPF.getLaneById(lane.id);

@@ -23,4 +23,8 @@ export default class CommunicationService {
   static sendStates(state: State<LaneWithColor>) {
     this.ws.send(JSON.stringify(state.getStateSortedAlphabetically().toJson()));
   }
+
+  static sendStateAs(state: State<LaneWithValue>, color: LightColors) {
+    this.sendStates(state.toStateWithColor(color));
+  }
 }

@@ -23,10 +23,6 @@
         "partners": ["B2"],
         "newId": "B23"
     },
-    "BB1": {
-        "partners": ["B2", "B3"],
-        "newId": "BB1B23"
-    },
     "E1": {
         "partners": ["EV1", "EV2", "EV3", "EV4"],
         "newId": "E"
@@ -56,19 +52,19 @@
         "newId": "F"
     },
     "FV3": {
-        "partners": ["FV2", "FV2", "FV4", "FF1", "FF2"],
+        "partners": ["FV1", "FV2", "FV2", "FV4", "FF1", "FF2"],
         "newId": "F"
     },
     "FV4": {
-        "partners": ["FV2", "FV2", "FV3", "FF1", "FF2"],
+        "partners": ["FV1", "FV2", "FV2", "FV3", "FF1", "FF2"],
         "newId": "F"
     },
     "FF1": {
-        "partners": ["FV2", "FV2", "FV3", "FV4", "FF2"],
+        "partners": ["FV1","FV2", "FV2", "FV3", "FV4", "FF2"],
         "newId": "F"
     },
     "FF2": {
-        "partners": ["FV2", "FV2", "FV3", "FV4", "FF1"],
+        "partners": ["FV1", "FV2", "FV2", "FV3", "FV4", "FF1"],
         "newId": "F"
     },
     "GV1": {
